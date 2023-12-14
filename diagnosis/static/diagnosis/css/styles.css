@@ -1,0 +1,81 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+
+  }
+
+  html {
+    font-size: 65.5%;
+  }
+
+ 
+/* CSS */
+body {  
+font-size: 1.6rem;
+background: rgb(218, 214, 214);
+color: rgb(61, 60, 60);
+font-family: Arial, sans-serif;
+margin: 0;
+padding: 0;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+height: 100vh;
+}
+
+.search-container {
+text-align: center;
+margin-bottom: 20px;
+}
+
+/* CSS */
+#selected-symptoms-container {
+margin-top: 20px;
+padding: 10px;
+border: 1px solid #ccc;
+background-color: #f8f8f8;
+}
+
+
+.search-input {
+width: 70%;
+padding: 10px;
+margin: 10px;
+}
+
+button {
+padding: 10px 20px;
+background-color: #4CAF50;
+color: white;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+}
+
+button:hover {
+background-color: #45a049;
+}
+
+#search-results, #diagnoses-container {
+text-align: center;
+padding: 20px;
+background-color: #f0f0f0;
+border-radius: 4px;
+width: 70%;
+}
+
+ul {
+list-style: none;
+padding: 0;
+}
+
+li {
+margin: 5px 0;
+}
+
+label {
+display: block;
+margin-bottom: 10px;
+}

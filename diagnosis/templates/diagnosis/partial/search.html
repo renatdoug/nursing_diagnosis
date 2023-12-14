@@ -1,0 +1,27 @@
+<!-- HTML -->
+<div class="search-container" id="search-container">
+    <label for="symptoms-input">Digite ou selecione os sinais e sintomas:</label>
+    <input list="symptoms-list" id="symptoms-input" class="search-input" placeholder="Exemplo: sintoma1, sintoma2">
+    <datalist id="symptoms-list">
+        <!-- As opções serão adicionadas dinamicamente via JavaScript -->
+    </datalist>
+    <button type="button" onclick="addSymptom()">Adicionar Sintoma</button>
+</div>
+
+<div id="selected-symptoms-container">
+    <p>Sintomas Selecionados:</p>
+    <ul id="selected-symptoms-list">
+        <!-- A lista de sintomas selecionados será exibida aqui -->
+    </ul>
+    <button type="button" onclick="submitSymptoms()">Buscar</button>
+
+    <!-- ... Seu código HTML existente ... -->
+
+
+<div id="prediction-results">
+    <!-- Os resultados da previsão serão exibidos aqui -->
+</div>
+
+<!-- ... Seu código HTML existente ... -->
+
+</div>
