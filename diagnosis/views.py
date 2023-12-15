@@ -1,48 +1,22 @@
 # diagnosis/views.py
-
-import os
-import json
-import pickle
-import unidecode
-import numpy as np
 from django.shortcuts import render
 from django.http import JsonResponse
+from .forms import DiagnosticoForm
+import json
+import pickle
+import os
+import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeClassifier
 from django.views.decorators.csrf import csrf_exempt
 
-
-
-
-# diagnosis/views.py
-
-"""def index(request):
-    return render(request, 'pages/index.html')
-
-def fazer_previsao(request):
-    return render(request, 'pages/fazer_previsao.html')"""
-
-
-
-# Create your views here.
-# diagnosis/views.py
-
-
-def index(request):
-    return render(request, 'diagnosis/pages/index.html')
-
-
-# Caminho para o modelo treinado
-modelo_treinado_path = os.path.join(os.path.dirname(__file__), 'static/diagnosis/data/2dt_model.pkl')
-
 # Carregar o modelo treinado
+modelo_treinado_path = os.path.join(os.path.dirname(__file__), 'data', 'model', '2dt_model.pkl')
 with open(modelo_treinado_path, 'rb') as file:
     clf_modelo_treinado = pickle.load(file)
 
-# Caminho para o arquivo de mapeamento
-mapping_path = os.path.join(os.path.dirname(__file__), 'static/diagnosis/data/2class_mapping.pkl')
-
 # Carregar o mapeamento
+mapping_path = os.path.join(os.path.dirname(__file__), 'data', 'model', '2class_mapping.pkl')
 with open(mapping_path, 'rb') as file:
     label_encoder_mapping = pickle.load(file)
 
@@ -52,29 +26,25 @@ if 'classes_' in label_encoder_mapping:
     label_encoder = LabelEncoder()
     label_encoder.classes_ = label_encoder_mapping['classes_']
 else:
-    # Se a chave 'classes_' não estiver presente, você precisa lidar com isso de acordo com a sua lógica
-    # Aqui, estou apenas criando um novo objeto LabelEncoder sem classes definidas
+    # Se a chave 'classes_' não estiver presente, criar um novo objeto LabelEncoder sem classes definidas
     label_encoder = LabelEncoder()
-# Função de fazer previsão
+
+def index(request):
+    form = DiagnosticoForm()
+    return render(request, 'diagnosis/pages/index.html', {'form': form})
+
 @csrf_exempt
-def fazer_previsao(request):
+def selecionar_sintomas(request):
     if request.method == 'POST':
         try:
-            # Obter os sintomas do corpo da solicitação POST
             data = json.loads(request.body.decode('utf-8'))
             sintomas = data.get('sintomas', [])
-
-            # Adicione esta linha para imprimir o conteúdo da solicitação POST
-            print('Conteúdo da solicitação POST:', sintomas)
 
             # Codificar os sintomas usando o LabelEncoder
             sintomas_codificados = label_encoder.transform(sintomas)
 
             # Inicializar um vetor de 192 elementos com zeros
             dados_paciente_np = np.zeros(192)
-
-            # Adicione este log para verificar as características processadas
-            print('Características processadas:', sintomas_codificados)
 
             # Definir as posições correspondentes aos sintomas como 1
             for sintoma_codificado in sintomas_codificados:
@@ -83,19 +53,19 @@ def fazer_previsao(request):
             # Reformular o array para o formato esperado pelo modelo
             dados_paciente_np = dados_paciente_np.reshape(1, -1)
 
-            # Obtenha as probabilidades das classes diretamente do modelo treinado
+            # Obter as probabilidades das classes diretamente do modelo treinado
             probas = clf_modelo_treinado.predict_proba(dados_paciente_np)[0]
 
-            # Pegue os n rótulos com as maiores probabilidades
+            # Pegar os n rótulos com as maiores probabilidades
             n = 3  # Este é um valor de exemplo. Ajuste conforme necessário.
             indices_top_n = probas.argsort()[-n:][::-1]
             rotulos_relevantes = clf_modelo_treinado.classes_[indices_top_n]
 
-            # Retorne os resultados como uma resposta JSON
+            # Retornar os resultados como uma resposta JSON
             return JsonResponse({'diagnosticos': list(rotulos_relevantes)})
 
         except json.JSONDecodeError as e:
             return JsonResponse({'error': 'Erro de decodificação JSON: {}'.format(str(e))}, status=400)
 
-    # Se a solicitação não for POST, retorne uma resposta vazia
+    # Se a solicitação não for POST, retornar uma resposta vazia
     return JsonResponse({})

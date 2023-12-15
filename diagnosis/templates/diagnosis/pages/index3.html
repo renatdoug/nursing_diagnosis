@@ -1,0 +1,29 @@
+<!-- Seu arquivo HTML (diagnosis/pages/index.html) -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico de Enfermagem</title>
+</head>
+<body>
+    <!-- Adicione seu conteúdo HTML aqui -->
+    <form method="post" id="diagnosisForm">
+        {% csrf_token %}
+        
+        <input type="text" id="symptoms-input" list="symptoms-list" placeholder="Selecione um sintoma">
+        <datalist id="symptoms-list"></datalist>
+        
+        <button type="button" onclick="addSymptom()">Adicionar Sintoma</button>
+
+        <ul id="selected-symptoms-list"></ul>
+        
+        <button type="button" onclick="submitSymptoms()">Fazer Previsão</button>
+    </form>
+
+    <div id="prediction-results"></div>
+
+    <script src="{% static 'diagnosis/js/symptoms.js' %}"></script>
+</body>
+</html>

@@ -1,29 +1,77 @@
-<!-- Seu arquivo HTML (diagnosis/pages/index.html) -->
-{% load static %}
+<!-- diagnosis/templates/diagnosis/pages/index.html -->
+
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagnóstico de Enfermagem</title>
+    <title>Previsão de Diagnóstico</title>
 </head>
 <body>
-    <!-- Adicione seu conteúdo HTML aqui -->
-    <form method="post" id="diagnosisForm">
-        {% csrf_token %}
-        
-        <input type="text" id="symptoms-input" list="symptoms-list" placeholder="Selecione um sintoma">
-        <datalist id="symptoms-list"></datalist>
-        
-        <button type="button" onclick="addSymptom()">Adicionar Sintoma</button>
+    <h1>Diagnóstico de Enfermagem</h1>
 
-        <ul id="selected-symptoms-list"></ul>
-        
-        <button type="button" onclick="submitSymptoms()">Fazer Previsão</button>
+    <form method="post" action="{% url 'fazer_previsao' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Fazer Previsão</button>
     </form>
 
     <div id="prediction-results"></div>
 
-    <script src="{% static 'diagnosis/js/symptoms.js' %}"></script>
+    <script>
+        function submitForm() {
+            // Obter todos os sintomas selecionados
+            var selectedSymptoms = Array.from(document.querySelectorAll('input[name^="sintoma"]:checked')).map(el => el.value);
+
+            // Verificar se pelo menos um sintoma foi selecionado
+            if (selectedSymptoms.length === 0) {
+                alert('Por favor, selecione pelo menos um sintoma.');
+                return;
+            }
+
+            // Enviar os sintomas para a view Django para fazer a previsão
+            fetch('/fazer_previsao/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+                },
+                body: JSON.stringify({ sintomas: selectedSymptoms })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro na requisição: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Lidar com os resultados da previsão recebidos do Django
+                displayPredictionResults(data.diagnosticos);
+            })
+            .catch(error => {
+                console.error('Erro ao fazer a previsão:', error);
+                if (error.response && error.response.text) {
+                    console.error('Corpo da resposta:', error.response.text);
+                }
+            });
+        }
+
+        function displayPredictionResults(diagnosticos) {
+            var resultsContainer = document.getElementById('prediction-results');
+            resultsContainer.innerHTML = '<p>Resultados da Previsão:</p>';
+            
+            if (diagnosticos.length > 0) {
+                var list = document.createElement('ul');
+                diagnosticos.forEach(function (diagnostico) {
+                    var listItem = document.createElement('li');
+                    listItem.textContent = diagnostico;
+                    list.appendChild(listItem);
+                });
+                resultsContainer.appendChild(list);
+            } else {
+                resultsContainer.innerHTML += '<p>Nenhum diagnóstico disponível.</p>';
+            }
+        }
+    </script>
 </body>
 </html>

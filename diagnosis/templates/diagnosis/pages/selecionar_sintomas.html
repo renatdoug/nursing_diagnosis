@@ -1,0 +1,12 @@
+<!-- diagnosis/templates/diagnosis/selecionar_sintomas.html -->
+
+<form method="post" action="{% url 'fazer_previsao' %}">
+    {% csrf_token %}
+    
+    {% for field in form %}
+      {{ field }}
+    {% endfor %}
+  
+    <button type="submit">Fazer Previsão</button>
+  </form>
+  

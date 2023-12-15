@@ -1,8 +1,8 @@
 # diagnosis/urls.py
 from django.urls import path
-from . import views
+from .views import index, selecionar_sintomas
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('fazer_previsao/', views.fazer_previsao, name='fazer_previsao'),
+    path('', index, name='index'),
+    path('selecionar_sintomas/', selecionar_sintomas, name='selecionar_sintomas'),
 ]
