@@ -20,4 +20,4 @@ Este projeto é uma aplicação web desenvolvida em Django que utiliza aprendiza
 
 1. Clone o repositório
    ```bash
-   git clone https://github.com/seu-usuario/seu-projeto.git
+   git clone https://github.com/renatdoug/nursing_diagnosis.git
